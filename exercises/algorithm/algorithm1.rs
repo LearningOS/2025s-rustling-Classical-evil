@@ -2,7 +2,6 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -29,13 +28,13 @@ struct LinkedList<T> {
     end: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Default for LinkedList<T> {
+impl<T: std::cmp::PartialOrd + Clone> Default for LinkedList<T> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T> LinkedList<T> {
+impl<T: std::cmp::PartialOrd + Clone> LinkedList<T> {
     pub fn new() -> Self {
         Self {
             length: 0,
@@ -72,11 +71,45 @@ impl<T> LinkedList<T> {
 	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
 	{
 		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
-        }
+		let mut list = LinkedList::new();
+	//	match (list_a.start, list_b.start) {
+	//		(Some(ptr1), Some(ptr2)) => {
+		list.merge_list(list_a.start, list_b.start);
+	//		}
+	//		_ =>{ println!("Something wrong!!!!");}
+	//	}
+		list
+	}
+	fn merge_list(&mut self, node1: Option<NonNull<Node<T>>>, node2: Option<NonNull<Node<T>>>) {
+		match (node1, node2) {
+			(Some(ptr1), Some(ptr2)) => {
+				unsafe {
+					if (*ptr1.as_ptr()).val > (*ptr2.as_ptr()).val {
+						let val = (*ptr2.as_ptr()).val.clone();
+						self.add(val);
+						self.merge_list(node1, unsafe { (*ptr2.as_ptr()).next });
+					}
+					else {
+						let val = (*ptr1.as_ptr()).val.clone();
+						self.add(val);
+						self.merge_list(unsafe { (*ptr1.as_ptr()).next }, node2 );
+					}
+				}
+							}
+			(None, Some(ptr2)) => {
+				match self.end {
+           			 None => println!("Something wrong!!"),
+           			 Some(end_ptr) => unsafe { (*end_ptr.as_ptr()).next = Some(ptr2)},
+        		} 
+			}
+			(Some(ptr1), None) => {
+				match self.end {
+           			 None => println!("Something wrong!!"),
+           			 Some(end_ptr) => unsafe { (*end_ptr.as_ptr()).next = Some(ptr1) },
+        		} 
+			}
+			_ => {}
+		}
 	}
 }
 
