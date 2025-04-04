@@ -3,7 +3,6 @@
 	This problem requires you to implement a basic interface for a binary tree
 */
 
-//I AM NOT DONE
 use std::cmp::Ordering;
 use std::fmt::Debug;
 
@@ -51,12 +50,55 @@ where
     // Insert a value into the BST
     fn insert(&mut self, value: T) {
         //TODO
+		match &mut self.root {
+			None => {
+				self.root = Some(Box::new(TreeNode::new(value)));
+			}
+			Some(ref mut root) => {
+				if root.value > value {
+					match &mut root.left {
+						Some(ref mut left) => left.insert(value),
+						None => root.left = Some(Box::new(TreeNode::new(value)))
+					}
+				}
+				else if (root.value < value){
+					match &mut root.right {
+						Some(ref mut right) => right.insert(value),
+						None => root.right = Some(Box::new(TreeNode::new(value)))
+					}
+				}
+			}
+		}
+		
     }
 
     // Search for a value in the BST
     fn search(&self, value: T) -> bool {
         //TODO
-        true
+        match &self.root {
+			None => false,
+			Some(root) => {
+				if root.value == value {
+					true
+				}
+				else if root.value > value  {
+					match &root.left {
+						Some(node) => {
+							node.search(value)
+						}
+						None => false
+					}
+				}
+				else {
+					match &root.right {
+						Some(node) => {
+							node.search(value)
+						}
+						None => false
+					}
+				}
+			}
+		}
     }
 }
 
@@ -67,7 +109,40 @@ where
     // Insert a node into the tree
     fn insert(&mut self, value: T) {
         //TODO
+		if self.value > value {
+			match &mut self.left {
+				Some(ref mut left) => left.insert(value),
+				None => self.left = Some(Box::new(TreeNode::new(value))),
+			}
+		}
+		else {
+			match &mut self.right {
+				Some(ref mut right) => right.insert(value),
+				None => self.right = Some(Box::new(TreeNode::new(value))),
+			}
+		}
+
     }
+	fn search(&self, value: T) -> bool {
+        //TODO
+		match self.value.cmp(&value) {
+			Ordering::Equal => {
+				true
+			}
+			Ordering::Greater => {
+				match &self.left {
+					Some(node) => node.search(value),
+					None => false
+				}
+			}
+			Ordering::Less => {
+				match &self.right {
+					Some(node) => node.search(value),
+					None => false
+				}	
+			}
+		}
+	}
 }
 
 

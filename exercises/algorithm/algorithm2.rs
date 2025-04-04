@@ -2,13 +2,13 @@
 	double linked list reverse
 	This problem requires you to reverse a doubly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
 use std::vec::*;
 
 #[derive(Debug)]
+#[derive(PartialEq)]
 struct Node<T> {
     val: T,
     next: Option<NonNull<Node<T>>>,
@@ -31,13 +31,13 @@ struct LinkedList<T> {
     end: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Default for LinkedList<T> {
+impl<T: Clone + std::cmp::PartialEq> Default for LinkedList<T> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T> LinkedList<T> {
+impl<T: Clone + std::cmp::PartialEq> LinkedList<T> {
     pub fn new() -> Self {
         Self {
             length: 0,
@@ -72,8 +72,61 @@ impl<T> LinkedList<T> {
             },
         }
     }
+	fn reverse_list(start: Option<NonNull<Node<T>>>, end: Option<NonNull<Node<T>>>) {
+		match (start, end) {
+				(Some(ptr1), Some(ptr2)) => {
+					
+						let mut x = unsafe{&mut (*ptr1.as_ptr()).val};
+						let mut y = unsafe{&mut (*ptr2.as_ptr()).val};
+						println!("Reverse!!");				
+						let tmp = x.clone();
+						*x = y.clone();
+						*y = tmp;
+						//start = unsafe{(*ptr1.as_ptr()).next};
+						//end = unsafe{(*ptr2.as_ptr()).prev};
+unsafe {
+						if (*ptr1.as_ptr()).val == (*ptr2.as_ptr()).val {
+							return;	
+						}
+						if (*ptr1.as_ptr()).next == end {
+							return;
+						}
+						}
+						Self::reverse_list(unsafe{(*ptr1.as_ptr()).next}, unsafe{(*ptr2.as_ptr()).prev});
+				
+				}
+				(None, Some(p)) => {println!("Start is none");}
+				(Some(p), None) => {println!("End is none");}
+				_ => {println!("Something is wrong!!");}
+			}
+	}
 	pub fn reverse(&mut self){
 		// TODO
+		Self::reverse_list(self.start, self.end);	
+		/*loop {
+			match (start, end) {
+				(Some(ptr1), Some(ptr2)) => {
+					unsafe {
+						if (*ptr1.as_ptr()) == (*ptr2.as_ptr()) {
+							break;
+						}
+						let mut x = unsafe{&mut (*ptr1.as_ptr()).val};
+						let mut y = unsafe{&mut (*ptr2.as_ptr()).val};
+						
+						let tmp = x.clone();
+						*x = y.clone();
+						*y = tmp;
+
+						start = unsafe{(*ptr1.as_ptr()).next};
+						end = unsafe{(*ptr2.as_ptr()).prev};
+					}
+
+				}
+				_ => {println!("Something wrong!!");}
+			}
+
+		}
+		*/
 	}
 }
 
